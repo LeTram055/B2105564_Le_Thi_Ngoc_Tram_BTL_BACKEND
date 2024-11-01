@@ -1,6 +1,6 @@
 const ApiError = require("../error/apiError.js");
 const serviceBorrowTracking = require("../services/borrowTracking.service.js");
-const serviceBorrowDetail = require("../services/borrowDetails.service.js");
+const serviceBorrowDetail = require("../services/borrowDetail.service.js");
 
 exports.create = async (req, res, next) => {
     const { userId, expectedReturnDate, bookDetails } = req.body;
@@ -63,11 +63,48 @@ exports.getById = async (req, res, next) => {
     }
 };
 
-exports.getAllByUserId = async (req, res) => {
+exports.getAllByUserId = async (req, res, next) => {
     try {
         const { userId } = req.params;
-        const result = await borrowTrackingService.getAllByUserId(userId);
-        res.status(200).json({ success: true, data: result });
+
+        // Lấy tất cả các borrowTracking của user dựa trên userId
+        const borrowTrackings = await serviceBorrowTracking.getAllByUserId(userId);
+
+        // Lấy chi tiết mượn cho từng borrowTracking
+        const borrowTrackingsWithDetails = await Promise.all(
+            borrowTrackings.map(async (tracking) => {
+                const borrowDetails = await serviceBorrowDetail.getAllByBorrowId(tracking._id);
+                return { ...tracking.toObject(), borrowDetails }; // Convert tracking to plain object and add details
+            })
+        );
+
+        res.status(200).json({
+            message: "All borrow trackings by user retrieved successfully",
+            data: borrowTrackingsWithDetails,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+exports.getAll = async (req, res, next) => {
+    try {
+        // Lấy tất cả các borrowTracking
+        const borrowTrackings = await serviceBorrowTracking.getAll();
+
+        // Lấy chi tiết mượn cho từng borrowTracking
+        const borrowTrackingsWithDetails = await Promise.all(
+            borrowTrackings.map(async (tracking) => {
+                const borrowDetails = await serviceBorrowDetail.getAllByBorrowId(tracking._id);
+                return { ...tracking.toObject(), borrowDetails }; // Convert tracking to plain object and add details
+            })
+        );
+
+        res.status(200).json({
+            message: "All borrow trackings retrieved successfully",
+            data: borrowTrackingsWithDetails,
+        });
     } catch (error) {
         next(error);
     }
