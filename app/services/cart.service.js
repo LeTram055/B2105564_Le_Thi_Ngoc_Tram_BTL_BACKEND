@@ -1,4 +1,4 @@
-const modelCart = require("../../models/cart.model.js");
+const modelCart = require("../models/cart.model.js");
 
 exports.create = async (cart) => {
     const result = await modelCart.create(cart);

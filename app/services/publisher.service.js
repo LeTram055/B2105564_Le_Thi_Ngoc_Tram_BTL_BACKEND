@@ -1,4 +1,4 @@
-const modelPublisher = require("../../models/publisher.model.js");
+const modelPublisher = require("../models/publisher.model.js");
 
 exports.create = async (user) => {
     const result = await modelPublisher.create(user);

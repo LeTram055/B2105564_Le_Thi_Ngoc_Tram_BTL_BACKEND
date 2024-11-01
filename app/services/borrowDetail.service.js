@@ -1,4 +1,4 @@
-const modelBorrowDetail = require("../../model/borrowDetail.modelBorrowDetail.js");
+const modelBorrowDetail = require("../models/borrowDetail.model.js");
 
 exports.create = async (detailData) => {
     const result = await modelBorrowDetail.create(detailData);

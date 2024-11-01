@@ -1,5 +1,5 @@
-const ApiError = require("../../error/apiError.js");
-const modelBook = require("../../models/book.model.js");
+const ApiError = require("../error/apiError.js");
+const modelBook = require("../models/book.model.js");
 
 exports.getPublisher = async (id) => {
     const book = await modelBook.findById(id).populate("publisherId").select("publisherId")

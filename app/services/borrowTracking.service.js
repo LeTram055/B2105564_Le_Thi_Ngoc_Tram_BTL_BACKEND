@@ -1,4 +1,4 @@
-const modelBorrowTracking = require("../../model/borrowTracking.modelBorrowTracking");
+const modelBorrowTracking = require("../models/borrowTracking.model");
 
 exports.create = async (borrowData) => {
     const result = await modelBorrowTracking.create(borrowData);
@@ -14,6 +14,12 @@ exports.getAllByUserId = async (userId) => {
     const result = await modelBorrowTracking.find({ userId }).populate("employeeId");
     return result;
 };
+
+exports.getAll = async () => {
+    const result = await modelBorrowTracking.find().populate("userId employeeId");
+    return result;
+};
+
 
 exports.update = async ({ id, data }) => {
     

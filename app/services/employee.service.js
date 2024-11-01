@@ -1,4 +1,4 @@
-const model = require("../../models/employee.model");
+const model = require("../models/employee.model");
 
 exports.create = async (employee) => {
     const result = await model.Employee.create(employee);
