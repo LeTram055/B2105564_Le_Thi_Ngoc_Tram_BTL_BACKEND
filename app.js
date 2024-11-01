@@ -19,11 +19,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const UserRouter = require('./app/routes/user.route.js');
 const EmployeeRouter = require('./app/routes/employee.route.js');
 const AuthRouter = require('./app/routes/auth.route.js');
-const ProductRouter = require('./app/routes/product.route.js')
+const BookRouter = require('./app/routes/book.route.js')
 const PublisherRouter = require('./app/routes/publisher.route.js')
 const CartRouter = require('./app/routes/cart.route.js')
-const BorrowTrackingRouter = require('./app/routes/borowTracking.route.js')
-const BorrowDetailRouter = require('./app/routes/borrowDetail.route.js')
+const BorrowTrackingRouter = require('./app/routes/borrowTracking.route.js')
+//const BorrowDetailRouter = require('./app/routes/borrowDetail.route.js')
 
 
 app.get("/", (req, res) => {
@@ -33,11 +33,11 @@ app.get("/", (req, res) => {
 app.use('/api', AuthRouter);
 app.use("/api/users", UserRouter);
 app.use("/api/employees", EmployeeRouter);
-app.use("/api/books", ProductRouter);
+app.use("/api/books", BookRouter);
 app.use("/api/publishers", PublisherRouter);
 app.use("/api/carts", CartRouter);
 app.use("/api/borrowTrackings", BorrowTrackingRouter);
-app.use("/api/borrowDetails", BorrowDetailRouter);
+//app.use("/api/borrowDetails", BorrowDetailRouter);
 
 app.use((req, res, next) => {
     return next(new ApiError(404, "Resource not found"));
