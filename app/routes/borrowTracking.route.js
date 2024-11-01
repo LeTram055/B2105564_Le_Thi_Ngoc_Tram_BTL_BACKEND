@@ -5,15 +5,21 @@ const middleware = require('../middleware/auth.js');
 const router = express.Router();
 
 router.route('/')
-    .get(controller.getAll)
     .post(middleware.userAuth, controller.create);
+    
+
+router.route('/admin')
+    .get(middleware.employeeOrAdminAuth, controller.getAll);
+
+router.route('/admin/:id')
+    .put(middleware.employeeOrAdminAuth, controller.update);
+    
 
 router.route('/:id')
-    .get(controller.getById)
-    .put(controller.update)
-    .delete(middleware.employeeOrAdminAuth, controller.delete);
+    .get(controller.getById);
 
-router.route('/user/:userId')
-    .get(middleware.userAuth, controller.getAllByUserId);
+router.route('/user/:id')
+    .get(middleware.userAuth, controller.getAllByUserId)
+    .put(middleware.userAuth, controller.update);
 
 module.exports = router;

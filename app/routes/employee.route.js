@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route('/')
     .get(middleware.adminAuth, controller.getAll)
-    .post(middleware.auth.adminAuth, controller.create)
+    .post(middleware.adminAuth, controller.create)
 
 router.route('/:id')
     .get(middleware.adminAuth, controller.getById)

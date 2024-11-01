@@ -12,7 +12,7 @@ router.route("/admin")
     .get(middleware.employeeOrAdminAuth, controller.getAll)
 
 router.route('/:id')
-    .get(controller.Product.getById)
+    .get(controller.getById)
     .put(middleware.employeeOrAdminAuth, controller.update)
     .delete(middleware.employeeOrAdminAuth, controller.delete)
 
