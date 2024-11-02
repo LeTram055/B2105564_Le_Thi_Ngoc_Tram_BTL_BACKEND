@@ -6,6 +6,7 @@ const serviceEmployee = require("../services/employee.service.js")
 const emailValidator = require("email-validator");
 
 const adminRole = "admin"
+const employeeRole = "employee"
 const userRole = "user"
 
 exports.register = async (req, res, next) => {
@@ -41,7 +42,6 @@ exports.login = async (req, res, next) => {
         if (emailValidator.validate(email) === false) {
             throw new ApiError(400, "Email is invalid");
         }
-
         const user = await serviceUser.getByEmail(email);
         const employee = await serviceEmployee.getByEmail(email)
         // Lấy mật khẩu hash từ user hoặc employee
@@ -51,11 +51,18 @@ exports.login = async (req, res, next) => {
         const correctPassword = await bcrypt.compare(password, hashPassword);
         if (!correctPassword)
             throw new ApiError(400, "Password is wrong")
+
+        let role;
+        if (user) {
+            role = userRole;
+        } else if (employee) {
+            role = (email === "admin123@gmail.com") ? adminRole : employeeRole; // Nếu là employee, kiểm tra email để đặt role
+        }
         
         const data = {
             id: user ? user.id : employee.id, 
             email: user ? user.email : employee.email, 
-            role: user ? userRole : adminRole,
+            role: role,
         }
         const token = jwt.createJWT(
             {
