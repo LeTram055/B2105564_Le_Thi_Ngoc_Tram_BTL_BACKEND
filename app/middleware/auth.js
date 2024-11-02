@@ -7,14 +7,26 @@ const userRole = "user";
 const employeeRole = "employee";
 
 const getRole = (token) => {
-    if (!token) return null;
-    const decoded = jwt.verify(token, jwtSecret);
-    return decoded.role;
+    if (!token) {
+        return null;
+    }
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+        return decoded.role;
+    } catch (error) {
+        return null;
+    }
 };
 
 const checkRole = (role, allowedRoles, next) => {
-    if (!role) throw new ApiError(401, "Hết phiên đăng nhập, vui lòng đăng nhập hoặc đăng ký");
-    if (!allowedRoles.includes(role)) throw new ApiError(403, "Tài khoản của bạn không có quyền truy cập, vui lòng đăng nhập với tài khoản có quyền truy cập");
+    if (!role) {
+        
+        throw new ApiError(401, "Hết phiên đăng nhập, vui lòng đăng nhập hoặc đăng ký");
+    }
+    if (!allowedRoles.includes(role)) {
+        
+        throw new ApiError(403, "Tài khoản của bạn không có quyền truy cập, vui lòng đăng nhập với tài khoản có quyền truy cập");
+    } 
     return next();
 };
 
@@ -50,6 +62,7 @@ exports.employeeAuth = async (req, res, next) => {
 
 // Xác thực cho `employee` hoặc `admin` quyền
 exports.employeeOrAdminAuth = async (req, res, next) => {
+    
     try {
         const role = getRole(req.cookies.jwt);
         return checkRole(role, [employeeRole, adminRole], next);

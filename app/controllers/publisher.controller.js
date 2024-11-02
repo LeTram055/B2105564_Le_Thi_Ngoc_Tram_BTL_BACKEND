@@ -65,7 +65,7 @@ exports.delete = async (req, res, next) => {
 exports.update = async (req, res, next) => {
     try {
         const id = req.params.id;
-        if (!(util.isObjectId(id))) {
+        if (!(mongoose.Types.ObjectId.isValid(id))) {
             throw new ApiError(400, "Publisher id is not valid");
         }
         const data = req.body;

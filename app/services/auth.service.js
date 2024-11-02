@@ -14,8 +14,9 @@ const createJWT = ({ response, data }) => {
     response.cookie("jwt", token, {
         httpOnly: true, // prevent access from javascript
         maxAge: maxAge * 1000, // convert to milliseconds
-        sameSite: 'None', // allow cross-site
-        //secure: true, // require https
+        sameSite: 'Lax', // allow cross-site
+        secure: false, // allow http
+        
     });
     return token
 }
