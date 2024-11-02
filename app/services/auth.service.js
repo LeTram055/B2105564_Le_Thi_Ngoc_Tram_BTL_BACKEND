@@ -27,6 +27,7 @@ const resetJWT = ({ response }) => {
 }
 
 module.exports = {
+    createToken,
     createJWT,
     resetJWT,
 }

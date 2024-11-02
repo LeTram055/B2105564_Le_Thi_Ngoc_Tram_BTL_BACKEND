@@ -1,32 +1,25 @@
 const modelUser = require("../models/user.model");
 
-exports.create = async (user) => {
-    const result = await modelUser.create(user);
-    return result;
+const serviceUser = {
+    create: async (user) => {
+        return await modelUser.create(user);
+    },
+    getAll: async () => {
+        return await modelUser.find({});
+    },
+    getById: async (id) => {
+        return await modelUser.findOne({ _id: id });
+    },
+    getByEmail: async (email) => {
+        return await modelUser.findOne({ email: email });
+    },
+    delete: async (id) => {
+        return await modelUser.deleteOne({ _id: id });
+    },
+    update: async ({ id, data }) => {
+        const isExist = await serviceUser.getById(id);
+        return isExist ? await modelUser.findOneAndUpdate({ _id: id }, data) : await serviceUser.create(data);
+    }
 };
 
-exports.getAll = async () => {
-    const result = await modelUser.find({});
-    return result;
-};
-
-exports.getById = async (id) => {
-    const result = await modelUser.findOne({ _id: id });
-    return result;
-};
-
-exports.getByEmail = async (email) => {
-    const result = await modelUser.findOne({ email });
-    return result;
-};
-
-exports.delete = async (id) => {
-    const result = await modelUser.deleteOne({ _id: id });
-    return result;
-}
-
-exports.update = async ({id, data}) => {
-    const isExist = await this.getById(id);
-    let result = await modelUser.findOneAndUpdate({ _id: id }, data);
-    return result;
-};
+module.exports = serviceUser;
