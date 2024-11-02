@@ -5,11 +5,11 @@ const middleware = require('../middleware/auth.js')
 const router = express.Router();
 
 router.route('/')
-    .get(middleware.adminAuth, controller.getAll)
+    .get(controller.getAll)
     .post(middleware.adminAuth, controller.create)
 
 router.route('/:id')
-    .get(middleware.adminAuth, controller.getById)
+    .get(controller.getById)
     .put(middleware.adminAuth, controller.update)
     .delete(middleware.adminAuth, controller.delete)
 

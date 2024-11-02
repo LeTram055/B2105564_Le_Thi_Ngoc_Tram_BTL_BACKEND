@@ -5,7 +5,7 @@ const middleware = require('../middleware/auth.js')
 const router = express.Router();
 
 router.route('/')
-    .get(middleware.employeeOrAdminAuth, controller.getAll)
+    .get(controller.getAll)
     .post(controller.create)
 
 router.route('/:id')
