@@ -1,15 +1,19 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
+const cookieParser = require('cookie-parser');
+
 
 const ApiError = require('./app/error/apiError.js');
-const middleware = require('./app/middleware/handleError.js');
+const handleError = require('./app/middleware/handleError.js');
 
 const app = express();
 
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Middleware phục vụ hình ảnh từ thư mục "uploads"
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -43,7 +47,8 @@ app.use((req, res, next) => {
     return next(new ApiError(404, "Resource not found"));
 });
 app.use((err, req, res, next) => {
-    const { statusCode, message } = middleware.handleError(err);
+    const apiError = handleError(err);
+    const { statusCode, message } = apiError;
     return res.status(statusCode).json({
         message
     });
