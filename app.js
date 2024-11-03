@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Middleware phục vụ hình ảnh từ thư mục "uploads"
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'app', 'uploads')));
 
 
 //routes

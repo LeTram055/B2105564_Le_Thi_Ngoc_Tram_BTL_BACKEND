@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const multer = require('multer');
+const fs = require('fs');
 const path = require('path');
 const ApiError = require('../error/apiError.js');
 const serviceBook = require("../services/book.service.js")
@@ -7,7 +8,7 @@ const serviceBook = require("../services/book.service.js")
 // Cấu hình multer để lưu ảnh vào thư mục "uploads"
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, 'app/uploads/');
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
