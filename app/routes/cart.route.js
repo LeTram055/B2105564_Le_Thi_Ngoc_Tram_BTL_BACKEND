@@ -10,10 +10,10 @@ router.route("/:userId")
 router.route("/cart/:id")
     .get(middleware.userAuth, controller.getById)
 
-router.route("/add-cart/:userId/:productId")
+router.route("/add-cart/:userId/:bookId")
     .post(middleware.userAuth, controller.add)
 
-router.route("/:userId/:productId")
+router.route("/:userId/:bookId")
     .post(middleware.userAuth, controller.update)
     .delete(middleware.userAuth, controller.delete)
 

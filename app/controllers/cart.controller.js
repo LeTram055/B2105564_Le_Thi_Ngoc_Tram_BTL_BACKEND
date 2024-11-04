@@ -71,15 +71,19 @@ exports.getById = async (req, res, next) => {
 
 exports.add = async (req, res, next) => {
     const { userId, bookId } = req.params
+    console.log(`userId: ${userId}, bookId: ${bookId}`); // Thêm log để kiểm tra userId, bookId
     
-    // check userId, bookId
-    if (!(mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(bookId)))
-        throw new ApiError(400, "User id or Product id is not valid");
+    if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
+        throw new ApiError(400, "User id or Book id is not valid");
+    }
+
 
     // call api book to get quantity
     const book = await serviceBook.getById(bookId)
-    if (!book)
-        throw new ApiError(400, "Product not exist")
+    if (!book) {
+        console.log(`Book not found for ID: ${bookId}`); // Thêm log để kiểm tra bookId
+        throw new ApiError(400, "Book not exist");
+    }
 
     // get cart, if cart not exist => create cart with quantiy = 0
     let cart = await serviceCart.getById({ userId, bookId })
@@ -103,13 +107,14 @@ exports.update = async (req, res, next) => {
     const { userId, bookId } = req.params
 
     // check userId, bookId
-    if (!(mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(bookId)))
-        throw new ApiError(400, "User id or Product id is not valid");
+    if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
+        throw new ApiError(400, "User id or Book id is not valid");
+    }
 
     // call api book to get quantity
     const book = await serviceBook.getById(bookId)
     if (!book)
-        throw new ApiError(400, "Product not exist")
+        throw new ApiError(400, "Book not exist")
 
     // get cart, if cart not exist => create cart with quantiy = 0
     let cart = await serviceCart.getById({ userId, bookId })
@@ -151,8 +156,9 @@ exports.delete = async (req, res, next) => {
     const { userId, bookId } = req.params
 
     // check userId, bookId
-    if (!(mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(bookId)))
-        throw new ApiError(400, "User id or Product id is not valid");
+    if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
+        throw new ApiError(400, "User id or Book id is not valid");
+    }
 
     try {
         const result = await serviceCart.delete({ userId, bookId });

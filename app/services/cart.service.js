@@ -5,36 +5,36 @@ exports.create = async (cart) => {
     return result;
 }
 
-exports.getById = async ({cartId, userId, productId}) => {
+exports.getById = async ({cartId, userId, bookId}) => {
     let result = null;
     if (cartId) 
-        result = await modelCart.findOne({ _id: cartId }).populate("productId userId");
-    else if (userId && productId)
-        result = await modelCart.findOne({ userId, productId }).populate("productId userId");
+        result = await modelCart.findOne({ _id: cartId }).populate("bookId userId");
+    else if (userId && bookId)
+        result = await modelCart.findOne({ userId, bookId }).populate("bookId userId");
     return result
 }
 
 exports.getAll = async (userId) => {
-    const result = await modelCart.find({ userId }).populate("productId userId");
+    const result = await modelCart.find({ userId }).populate("bookId userId");
     return result;
 };
 
-exports.update = async (userId, productId, data) => {
+exports.update = async (userId, bookId, data) => {
     const result = await modelCart.findOneAndUpdate({
         userId,
-        productId
+        bookId
     }, data, { new: true });
     return result
 }
 
-exports.delete = async ({cartId, userId, productId}) => {
+exports.delete = async ({cartId, userId, bookId}) => {
     let result = null;
     if (cartId) 
         result = await modelCart.deleteOne({ _id: cartId });
-    else if (userId && productId)
+    else if (userId && bookId)
         result = await modelCart.deleteOne({
             userId,
-            productId
+            bookId
         
         });
     return result;
