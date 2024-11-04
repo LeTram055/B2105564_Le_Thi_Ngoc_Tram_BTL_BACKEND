@@ -16,7 +16,7 @@ const BorrowTrackingSchema = new mongoose.Schema({
     },
     expectedReturnDate: {
         type: Date,
-        required: [true, "Expected return date is required"], // Ngày trả dự kiến
+        default: null, // Ngày dự kiến trả sách
     },
     actualReturnDate: {
         type: Date,

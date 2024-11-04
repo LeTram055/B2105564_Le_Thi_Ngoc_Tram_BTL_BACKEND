@@ -71,7 +71,6 @@ exports.getById = async (req, res, next) => {
 
 exports.add = async (req, res, next) => {
     const { userId, bookId } = req.params
-    console.log(`userId: ${userId}, bookId: ${bookId}`); // Thêm log để kiểm tra userId, bookId
     
     if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
         throw new ApiError(400, "User id or Book id is not valid");
@@ -81,7 +80,7 @@ exports.add = async (req, res, next) => {
     // call api book to get quantity
     const book = await serviceBook.getById(bookId)
     if (!book) {
-        console.log(`Book not found for ID: ${bookId}`); // Thêm log để kiểm tra bookId
+        
         throw new ApiError(400, "Book not exist");
     }
 

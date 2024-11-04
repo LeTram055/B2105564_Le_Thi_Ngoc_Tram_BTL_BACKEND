@@ -1,46 +1,64 @@
 const ApiError = require("../error/apiError.js");
 const serviceBorrowTracking = require("../services/borrowTracking.service.js");
 const serviceBorrowDetail = require("../services/borrowDetail.service.js");
+const Cart = require("../models/cart.model.js");
+const serviceBook = require("../services/book.service.js");
 
 exports.create = async (req, res, next) => {
-    const { userId, expectedReturnDate, bookDetails } = req.body;
+    const { cartIds, totalPrice } = req.body;
 
     try {
-        // Tạo `borrowTracking` với `price: null`
+        
+        // Kiểm tra nếu không có `cartIds`
+        if (!cartIds || !cartIds.length) {
+            throw new ApiError(400, "No cart IDs provided");
+        }
+
+        // Tìm tất cả các `Cart` dựa trên mảng `cartIds`
+        const cartItems = await Cart.find({ _id: { $in: cartIds } }).populate("bookId userId");
+        
+        if (!cartItems.length) throw new ApiError(404, "Cart items not found or empty");
+
+        const userId = cartItems[0].userId._id;
+
+        // Tạo `borrowTracking`
         const borrowTracking = await serviceBorrowTracking.create({
             userId: userId,
-            expectedReturnDate: expectedReturnDate,
-            price: null,
+            status: "Đang xử lý",
+            price: totalPrice,
+            requestDate: new Date(),
         });
 
-        let totalPrice = 0;
-
-        // Lấy thông tin giá sách từ `bookDetails` và tính tổng giá
+        // Tạo borrowDetails cho mỗi sách trong giỏ hàng
         const borrowDetails = await Promise.all(
-            bookDetails.map(async (detail) => {
-                const book = await Book.findById(detail.bookId);
-                const bookPrice = book.price * detail.quantity;
-                totalPrice += bookPrice;
+            cartItems.map(async (item) => {
+                const book = await serviceBook.getById(item.bookId._id);
+                if (!book) throw new ApiError(404, "Book not found");
 
-                // Tạo bản ghi chi tiết mượn sách với `borrowId`
+                // Kiểm tra số lượng sách còn lại
+                if (book.quantity < item.quantity) {
+                    throw new ApiError(400, "Not enough books in stock");
+                }
+
+                // Trừ số lượng sách trong kho
+                book.quantity -= item.quantity;
+                await book.save();
+
                 return await serviceBorrowDetail.create({
                     borrowId: borrowTracking._id,
-                    bookId: detail.bookId,
-                    quantity: detail.quantity,
-                    price: book.price,
+                    bookId: item.bookId._id,
+                    quantity: item.quantity,
+                    price: item.bookId.price,
                 });
             })
         );
-
-        // Cập nhật lại `borrowTracking` với `totalPrice`
-        borrowTracking.price = totalPrice;
-        await borrowTracking.save();
 
         res.status(201).json({
             message: "Borrow request created successfully",
             data: { borrowTracking, borrowDetails },
         });
     } catch (error) {
+        console.error("Error occurred:", error);
         next(error);
     }
 };
