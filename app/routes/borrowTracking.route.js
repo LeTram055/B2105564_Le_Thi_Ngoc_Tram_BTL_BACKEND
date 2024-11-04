@@ -15,11 +15,13 @@ router.route('/admin/:id')
     .put(middleware.employeeOrAdminAuth, controller.update);
     
 
-router.route('/:id')
+router.route('/:borrowId')
     .get(controller.getById);
 
 router.route('/user/:id')
-    .get(middleware.userAuth, controller.getAllByUserId)
     .put(middleware.userAuth, controller.update);
+
+router.route('/user/:userId')
+    .get(middleware.userAuth, controller.getAllByUserId);
 
 module.exports = router;
