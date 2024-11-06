@@ -136,10 +136,6 @@ exports.update = async (req, res, next) => {
         const { id } = req.params;
         const { status, employeeId } = req.body;
 
-        console.log("status", status);
-        console.log("employeeId", employeeId);
-        console.log("id", id);
-
         // Tạo đối tượng data để chứa thông tin cần cập nhật
         const data = { status, employeeId };
 
