@@ -90,3 +90,40 @@ exports.update = async (req, res, next) => {
         next(err);
     }
 };
+
+// Thêm vào controller employee.controller.js
+
+exports.changePassword = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { oldPassword, newPassword } = req.body;
+
+        if (!(mongoose.Types.ObjectId.isValid(id))) {
+            throw new ApiError(400, "Mã nhân viên không hợp lệ");
+        }
+
+        const employee = await serviceEmployee.getById(id);
+        if (!employee) {
+            throw new ApiError(400, "Nhân viên không tồn tại");
+        }
+
+        // Kiểm tra mật khẩu cũ
+        const isOldPasswordValid = await bcrypt.compare(oldPassword, employee.password);
+        if (!isOldPasswordValid) {
+            throw new ApiError(400, "Mật khẩu cũ không chính xác");
+        }
+
+        // Hash mật khẩu mới
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Cập nhật mật khẩu mới
+        const updatedEmployee = await serviceEmployee.updatePassword(id, hashedPassword);
+
+        res.status(200).json({
+            message: "Mật khẩu đã được thay đổi thành công",
+            data: updatedEmployee,
+        });
+    } catch (err) {
+        next(err);
+    }
+};

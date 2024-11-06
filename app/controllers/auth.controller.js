@@ -14,6 +14,8 @@ exports.register = async (req, res, next) => {
         const data = req.body;
         if (await serviceUser.getByEmail(data.email) || await serviceEmployee.getByEmail(data.email))
             throw new ApiError(400, 'Email này đã đăng ký.');
+        if (data.password.length < 8) 
+            throw new ApiError(400, "Mật khẩu phải chứa ít nhất 8 ký tự");
         data.password = await bcrypt.hash(data.password, 10);
         const user = await serviceUser.create(data);
         const token = jwt.createJWT(

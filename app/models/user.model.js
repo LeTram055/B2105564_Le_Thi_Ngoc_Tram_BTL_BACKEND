@@ -30,6 +30,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "Mật khẩu không được để trống"],
+        min: [8, "Mật khẩu phải chứa ít nhất 6 ký tự"],
     },
     email: {
         type: String,

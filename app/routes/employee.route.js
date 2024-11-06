@@ -13,4 +13,6 @@ router.route('/:id')
     .put(middleware.adminAuth, controller.update)
     .delete(middleware.adminAuth, controller.delete)
 
+router.route('/:id/change-password')
+    .put(middleware.employeeOrAdminAuth, controller.changePassword)
 module.exports = router;

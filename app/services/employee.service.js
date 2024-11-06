@@ -19,7 +19,15 @@ const serviceEmployee = {
     update: async ({ id, data }) => {
         const isExist = await serviceEmployee.getById(id);
         return isExist ? await modelEmployee.findOneAndUpdate({ _id: id }, data) : await serviceEmployee.create(data);
-    }
+    },
+    // Thêm vào service employee.service.js
+
+    updatePassword: async (id, hashedPassword) => {
+        
+    const result = await modelEmployee.findByIdAndUpdate({_id: id}, { password: hashedPassword });
+        return result;
+    },
+
 };
 
 module.exports = serviceEmployee;
