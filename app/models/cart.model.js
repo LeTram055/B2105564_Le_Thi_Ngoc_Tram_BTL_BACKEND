@@ -4,12 +4,12 @@ const CartSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "User id is required"],
+        required: [true, "Mã người dùng không được để trống"],
     },
     bookId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Book",
-        required: [true, "Book id is required"],
+        required: [true, "Mã sách không được để trống"],
     },
     quantity: {
         type: Number,

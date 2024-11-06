@@ -136,6 +136,10 @@ exports.update = async (req, res, next) => {
         const { id } = req.params;
         const { status, employeeId } = req.body;
 
+        console.log("status", status);
+        console.log("employeeId", employeeId);
+        console.log("id", id);
+
         // Tạo đối tượng data để chứa thông tin cần cập nhật
         const data = { status, employeeId };
 
@@ -148,6 +152,13 @@ exports.update = async (req, res, next) => {
             data.expectedReturnDate = new Date(new Date().setDate(new Date().getDate() + 30)); // Cập nhật ngày trả dự kiến là 30 ngày sau
         } else if (status === "Đã trả") {
             data.actualReturnDate = new Date(); 
+            await Promise.all(borrowDetails.map(async (detail) => {
+                const book = await serviceBook.getById(detail.bookId);
+                if (book) {
+                    book.quantity += detail.quantity; 
+                    await book.save(); 
+                }
+            }));
         } else if (status === "Đã hủy") {
             // Tăng lại số lượng sách cho từng sách trong borrowDetails
             await Promise.all(borrowDetails.map(async (detail) => {

@@ -4,21 +4,21 @@ const BorrowDetailsSchema = new mongoose.Schema({
     borrowId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "BorrowTracking",
-        required: [true, "Borrow id is required"],
+        required: [true, "Mượn sách id không được để trống"],
     },
     bookId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Book",
-        required: [true, "Book id is required"],
+        required: [true, "Sách id không được để trống"],
     },
     quantity: {
         type: Number,
-        required: [true, "Quantity is required"],
+        required: [true, "Số lượng sách không được để trống"],
         min: 1,
     },
     price: {
         type: Number,
-        required: [true, "Price is required"],
+        required: [true, "Giá tiền không được để trống"],
         min: 0,
     },
 });

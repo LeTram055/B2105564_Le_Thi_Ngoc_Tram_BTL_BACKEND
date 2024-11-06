@@ -8,7 +8,7 @@ exports.getAll = async (req, res, next) => {
     try {
         const result = await serviceUser.getAll();
         res.status(200).json({
-            message: "Get all user successfully",
+            message: "Người đoc đã được lấy thành công",
             data: result,
         });
     } catch (err) {
@@ -20,13 +20,13 @@ exports.getById = async (req, res, next) => {
     try {
         const id = req.params.id;
         if (!(mongoose.Types.ObjectId.isValid(id))) {
-            throw new ApiError(400, "User id is not valid");
+            throw new ApiError(400, "Mã không hợp lệ");
         }
         const result = await serviceUser.getById(id);
         if (!result)
-            throw new ApiError(400, "User not exist");
+            throw new ApiError(400, "Người đọc không tồn tại");
         res.status(200).json({
-            message: "Get user successfully",
+            message: "Người đọc đã được lấy thành công",
             data: result,
         });
     } catch (err) {
@@ -38,12 +38,12 @@ exports.create = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         if (await serviceUser.getByEmail(email))
-            throw new ApiError(400, 'The user\'s email already exists.');
+            throw new ApiError(400, 'Email đã tồn tại.');
         const data = req.body;
         data.password = await bcrypt.hash(password, 10);
         const result = await serviceUser.create(data);
         res.status(201).json({
-            message: "Create user successfully",
+            message: "Người đọc đã được tạo thành công",
             data: result,
         });
     } catch (err) {
@@ -55,17 +55,17 @@ exports.delete = async (req, res, next) => {
     try {
         const id = req.params.id;
         if (!(mongoose.Types.ObjectId.isValid(id))) {
-            throw new ApiError(400, "User id is not valid");
+            throw new ApiError(400, "Mã không hợp lệ");
         }
         const result = await serviceUser.delete(id);
         if (result.deletedCount)
             res.status(200).json({
-                message: "Delete user successfully",
+                message: "Người đọc đã được xóa thành công",
                 data: result,
             });
         else
             res.status(400).json({
-                message: "User id not exist",
+                message: "Mã không hợp lệ",
                 data: result,
             });
     } catch (err) {
@@ -77,17 +77,17 @@ exports.update = async (req, res, next) => {
     try {
         const id = req.params.id;
         if (!util.isObjectId(id)) {
-            throw new ApiError(400, "User id is not valid");
+            throw new ApiError(400, "Mã không hợp lệ");
         }
         if(!(await serviceUser.getById(id))) {
-            throw new ApiError(400, "User is not exist")
+            throw new ApiError(400, "Mã không hợp lệ");
         }
         const data = req.body;
         if (data.password)
             data.password = await bcrypt.hash(data.password, 10);
         const result = await serviceUser.update({id: id, data});
         res.status(200).json({
-            message: "Update user successfully",
+            message: "Người đọc đã được cập nhật thành công",
             data: result,
         });
     } catch (err) {

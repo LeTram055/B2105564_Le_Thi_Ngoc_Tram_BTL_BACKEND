@@ -4,7 +4,7 @@ const BorrowTrackingSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "User id is required"],
+        required: [true, "Người đọc không được để trống"], // Người đọc yêu cầu mượn sách
     },
     requestDate: {
         type: Date,

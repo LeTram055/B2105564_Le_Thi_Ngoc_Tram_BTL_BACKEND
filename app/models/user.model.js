@@ -4,37 +4,37 @@ const validator = require('validator')
 const UserSchema = new mongoose.Schema({
     lastName: {
         type: String,
-        required: [true, "Last name is required"],
+        required: [true, "Họ không được để trống"],
     },
     firstName: {
         type: String,
-        required: [true, "First name is required"],
+        required: [true, "Tên không được để trống"],
     },
     dateOfBirth: {
         type: Date,
-        required: [true, "Date of birth is required"],
+        required: [true, "Ngày sinh không được để trống"],
     },
     gender: {
         type: String,
-        required: [true, "Gender male or female is required"],
+        required: [true, "Giới tính không được để trống"],
     },
     address: {
         type: String,
-        required: [true, "Address is required"],
+        required: [true, "Địa chỉ không được để trống"],
     },
     phone: {
         type: String,
-        match: [/^(09|08|03|07|05)[0-9]{8}$/, "Phone is not valid"],
-        required: [true, "Phone is required"],
+        match: [/^(09|08|03|07|05)[0-9]{8}$/, "Số điện thoại không hợp lệ"],
+        required: [true, "Số điện thoại không được để trống"],
     },
     password: {
         type: String,
-        required: [true, "Password is required"],
+        required: [true, "Mật khẩu không được để trống"],
     },
     email: {
         type: String,
-        unique: [true, "Email is already taken"],
-        required: [true, "Email is required"],
+        unique: [true, "Email đã tồn tại"],
+        required: [true, "Email không được để trống"],
     }
 });
 
@@ -46,8 +46,8 @@ UserSchema.path('email').validate({
     },
     message: function(props) {
         if (!validator.isEmail(props.value))
-            return "Email is not valid"
-        return "An error has occurred"
+            return "Email không hợp lệ"
+        return "Một lỗi đã xảy ra"
     },
 })
 

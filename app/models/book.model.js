@@ -3,32 +3,32 @@ const mongoose = require('mongoose');
 const BookSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Name is required"],
+        required: [true, "Tên sách không được để trống"],
     },
     image: {
         type: String,
-        required: [true, "Image is required"],
+        required: [true, "Hình ảnh không được để trống"],
     },
     price: {
         type: Number,
-        required: [true, "Price is required"],
+        required: [true, "Giá sách không được để trống"],
     },
     quantity: {
         type: Number,
-        required: [true, "Quantity is required"],
+        required: [true, "Số lượng sách không được để trống"],
     },
     publishYear: {
         type: Number,
-        required: [true, "Publishing Year is required"],
+        required: [true, "Năm xuất bản không được để trống"],
     },
     publisherId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Publisher",
-        required: [true, "Publisher id is required"],
+        required: [true, "Nhà xuất bản không được để trống"],
     },
     author: {
         type: String,
-        required: [true, "Author is required"],
+        required: [true, "Tác giả không được để trống"],
     },
     description: {
         type: String,

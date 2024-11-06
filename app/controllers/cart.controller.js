@@ -94,7 +94,7 @@ exports.add = async (req, res, next) => {
     try {
         const result = await serviceCart.update(userId, bookId, { quantity });
         res.status(200).json({
-            message: "Add cart successfully",
+            message: "Thêm vào giỏ hàng thành công",
             data: result,
         });
     } catch (err) {
@@ -107,13 +107,13 @@ exports.update = async (req, res, next) => {
 
     // check userId, bookId
     if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
-        throw new ApiError(400, "User id or Book id is not valid");
+        throw new ApiError(400, "Mã người dùng hoặc mã sách không hợp lệ");
     }
 
     // call api book to get quantity
     const book = await serviceBook.getById(bookId)
     if (!book)
-        throw new ApiError(400, "Book not exist")
+        throw new ApiError(400, "Sách không tồn tại");
 
     // get cart, if cart not exist => create cart with quantiy = 0
     let cart = await serviceCart.getById({ userId, bookId })
@@ -127,12 +127,12 @@ exports.update = async (req, res, next) => {
             const result = await serviceCart.delete({ userId, bookId });
             if (result.deletedCount)
                 res.status(200).json({
-                    message: "Delete cart successfully",
+                    message: "Sách đã được xóa khỏi giỏ hàng",
                     data: result,
                 });
             else
                 res.status(400).json({
-                    message: "Cart not exist",
+                    message: "Giỏ hàng không tồn tại",
                     data: result,
                 });
         } catch (err) {
@@ -142,7 +142,7 @@ exports.update = async (req, res, next) => {
         try {
             const result = await serviceCart.update(userId, bookId, { quantity });
             res.status(200).json({
-                message: "Update cart successfully",
+                message: "Cập nhật giỏ hàng thành công",
                 data: result,
             });
         } catch (err) {
@@ -156,19 +156,19 @@ exports.delete = async (req, res, next) => {
 
     // check userId, bookId
     if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
-        throw new ApiError(400, "User id or Book id is not valid");
+        throw new ApiError(400, "Mã người dùng hoặc mã sách không hợp lệ");
     }
 
     try {
         const result = await serviceCart.delete({ userId, bookId });
         if (result)
             res.status(200).json({
-                message: "Delete cart successfully",
+                message: "Xóa khỏi giỏ hàng thành công",
                 data: result,
             });
         else
             res.status(400).json({
-                message: "Cart not exist",
+                message: "Giỏ hàng không tồn tại",
                 data: result,
             });
     } catch (err) {

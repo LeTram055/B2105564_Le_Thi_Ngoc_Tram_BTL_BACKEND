@@ -6,29 +6,29 @@ const validator = require('validator');
 const EmployeeSchema = new Schema({
     name: {
         type: String,
-        required: [true, "Name is required"],
+        required: [true, "Tên nhân viên không được để trống"],
     },
     password: {
         type: String,
-        required: [true, "Password is required"],
+        required: [true, "Mật khẩu không được để trống"],
     },
     position: {
         type: String,
-        default: "Customer care staff",
+        default: "Chăm sóc khách hàng",
     },
     address: {
         type: String,
-        required: [true, "Address is required"],
+        required: [true, "Địa chỉ không được để trống"],
     },
     phone: {
         type: String,
-        match: [/^(09|08|03|07|05)[0-9]{8}$/, "Phone is not valid"],
-        required: [true, "Phone is required"],
+        match: [/^(09|08|03|07|05)[0-9]{8}$/, "Số điện thoại không hợp lệ"],
+        required: [true, "Số điện thoại không được để trống"],
     },
     email: {
         type: String,
-        unique: [true, "Email is already taken"],
-        required: [true, "Email is required"],
+        unique: [true, "Email đã tồn tại"],
+        required: [true, "Email không được để trống"],
     }
 });
 
@@ -40,8 +40,8 @@ EmployeeSchema.path('email').validate({
     },
     message: function(props) {
         if (!validator.isEmail(props.value))
-            return "Email is not valid"
-        return "An error has occurred"
+            return "Email không hợp lệ"
+        return "Một lỗi đã xảy ra"
     },
 })
 
