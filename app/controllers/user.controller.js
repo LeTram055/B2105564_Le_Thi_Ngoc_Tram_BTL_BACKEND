@@ -94,3 +94,38 @@ exports.update = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.changePassword = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { oldPassword, newPassword } = req.body;
+
+        if (!(mongoose.Types.ObjectId.isValid(id))) {
+            throw new ApiError(400, "Mã người dùng không hợp lệ");
+        }
+
+        const user = await serviceUser.getById(id);
+        if (!user) {
+            throw new ApiError(400, "Người dùng không tồn tại");
+        }
+
+        // Kiểm tra mật khẩu cũ
+        const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
+        if (!isOldPasswordValid) {
+            throw new ApiError(400, "Mật khẩu cũ không chính xác");
+        }
+
+        // Hash mật khẩu mới
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Cập nhật mật khẩu mới
+        const updatedUser = await serviceUser.updatePassword(id, hashedPassword);
+
+        res.status(200).json({
+            message: "Mật khẩu đã được thay đổi thành công",
+            data: updatedUser,
+        });
+    } catch (err) {
+        next(err);
+    }
+};

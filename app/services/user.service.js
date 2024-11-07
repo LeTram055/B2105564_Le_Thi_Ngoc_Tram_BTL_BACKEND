@@ -19,7 +19,11 @@ const serviceUser = {
     update: async ({ id, data }) => {
         const isExist = await serviceUser.getById(id);
         return isExist ? await modelUser.findOneAndUpdate({ _id: id }, data) : await serviceUser.create(data);
-    }
+    },
+    updatePassword: async (id, hashedPassword) => {
+        const result = await modelUser.findByIdAndUpdate({_id: id}, { password: hashedPassword });
+            return result;
+    },
 };
 
 module.exports = serviceUser;
