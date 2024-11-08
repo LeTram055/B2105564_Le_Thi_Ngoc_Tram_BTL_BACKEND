@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const BorrowDetails = require('./borrowDetail.model');
 
 const BorrowTrackingSchema = new mongoose.Schema({
     userId: {
@@ -36,6 +37,7 @@ const BorrowTrackingSchema = new mongoose.Schema({
         type: Number,
         default: 0, // Tổng giá tiền mượn sách
     },
+    borrowDetails: [BorrowDetails.schema], // Danh sách sách mượn
 });
 
 const BorrowTracking = mongoose.model("BorrowTracking", BorrowTrackingSchema);

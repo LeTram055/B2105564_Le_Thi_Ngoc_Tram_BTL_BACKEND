@@ -1,6 +1,5 @@
 const ApiError = require("../error/apiError.js");
 const serviceBorrowTracking = require("../services/borrowTracking.service.js");
-const serviceBorrowDetail = require("../services/borrowDetail.service.js");
 const Cart = require("../models/cart.model.js");
 const serviceBook = require("../services/book.service.js");
 
@@ -21,14 +20,6 @@ exports.create = async (req, res, next) => {
 
         const userId = cartItems[0].userId._id;
 
-        // Tạo `borrowTracking`
-        const borrowTracking = await serviceBorrowTracking.create({
-            userId: userId,
-            status: "Đang xử lý",
-            price: totalPrice,
-            requestDate: new Date(),
-        });
-
         // Tạo borrowDetails cho mỗi sách trong giỏ hàng
         const borrowDetails = await Promise.all(
             cartItems.map(async (item) => {
@@ -44,18 +35,24 @@ exports.create = async (req, res, next) => {
                 book.quantity -= item.quantity;
                 await book.save();
 
-                return await serviceBorrowDetail.create({
-                    borrowId: borrowTracking._id,
+                return {
                     bookId: item.bookId._id,
                     quantity: item.quantity,
-                    price: (item.bookId.price)*(item.quantity),
-                });
+                    price: item.bookId.price * item.quantity,
+                };
             })
         );
+        const borrowTracking = await serviceBorrowTracking.create({
+            userId,
+            status: "Đang xử lý",
+            price: totalPrice,
+            requestDate: new Date(),
+            borrowDetails,
+        });
 
         res.status(201).json({
             message: "Yêu cầu mượn sách đã được tạo thành công",
-            data: { borrowTracking, borrowDetails },
+            data: { borrowTracking },
         });
     } catch (error) {
         next(error);
@@ -68,15 +65,11 @@ exports.getById = async (req, res, next) => {
         const { borrowId } = req.params;
         
         const borrowTracking = await serviceBorrowTracking.getById(borrowId);
-       
-
         if (!borrowTracking) throw new ApiError(404, "Theo dõi mượn không tồn tại");
-        const borrowDetails = await serviceBorrowDetail.getAllByBorrowId(borrowId);
-        
-        
+
         res.status(200).json({
             message: "Theo dõi mượn được tìm thấy thành công",
-            data: {borrowTracking, borrowDetails},
+            data: borrowTracking,
         });
     } catch (error) {
         next(error);
@@ -91,17 +84,12 @@ exports.getAllByUserId = async (req, res, next) => {
         // Lấy tất cả các borrowTracking của user dựa trên userId
         const borrowTrackings = await serviceBorrowTracking.getAllByUserId(userId);
         
-        // Lấy chi tiết mượn cho từng borrowTracking
-        const borrowTrackingsWithDetails = await Promise.all(
-            borrowTrackings.map(async (tracking) => {
-                const borrowDetails = await serviceBorrowDetail.getAllByBorrowId(tracking._id);
-                return { ...tracking.toObject(), borrowDetails }; // Convert tracking to plain object and add details
-            })
-        );
-
+        
+        console.log(borrowTrackings);
+        console.log("borrowdetails", borrowTrackings[0].borrowDetails.quantity);
         res.status(200).json({
             message: "Tất cả theo dõi mượn đã được lấy thành công",
-            data: borrowTrackingsWithDetails,
+            data: borrowTrackings,
         });
     } catch (error) {
         next(error);
@@ -111,20 +99,11 @@ exports.getAllByUserId = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        // Lấy tất cả các borrowTracking
         const borrowTrackings = await serviceBorrowTracking.getAll();
-
-        // Lấy chi tiết mượn cho từng borrowTracking
-        const borrowTrackingsWithDetails = await Promise.all(
-            borrowTrackings.map(async (tracking) => {
-                const borrowDetails = await serviceBorrowDetail.getAllByBorrowId(tracking._id);
-                return { ...tracking.toObject(), borrowDetails }; // Convert tracking to plain object and add details
-            })
-        );
 
         res.status(200).json({
             message: "Tất cả theo dõi mượn đã được lấy thành công",
-            data: borrowTrackingsWithDetails,
+            data: borrowTrackings,
         });
     } catch (error) {
         next(error);
@@ -138,10 +117,9 @@ exports.update = async (req, res, next) => {
 
         // Tạo đối tượng data để chứa thông tin cần cập nhật
         const data = { status, employeeId };
-
-        // Lấy chi tiết mượn dựa vào borrowId
-        const borrowDetails = await serviceBorrowDetail.getAllByBorrowId(id);
-
+        const borrowTracking = await serviceBorrowTracking.getById(id);
+        
+        if (!borrowTracking) throw new ApiError(404, "Theo dõi mượn không tồn tại");
         // Xử lý cập nhật các ngày dựa vào trạng thái
         if (status === "Đã mượn") {
             data.borrowDate = new Date();
@@ -168,8 +146,6 @@ exports.update = async (req, res, next) => {
         // Gọi service để cập nhật yêu cầu mượn với thông tin mới
         const updatedBorrowTracking = await serviceBorrowTracking.update({ id, data });
 
-        if (!updatedBorrowTracking) throw new ApiError(404, "Theo dõi mượn không tồn tại");
-
         res.status(200).json({
             message: "Theo dõi mượn cập nhật thành công",
             data: updatedBorrowTracking,
@@ -183,8 +159,6 @@ exports.update = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
     try {
         const { id } = req.params;
-
-        await serviceBorrowDetail.deleteAllByBorrowId(id);
         const result = await serviceBorrowTracking.delete(id);
 
         if (!result.deletedCount) throw new ApiError(404, "Theo dõi mượn không tồn tại");

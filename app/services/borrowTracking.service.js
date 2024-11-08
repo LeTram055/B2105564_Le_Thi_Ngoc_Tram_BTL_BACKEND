@@ -6,17 +6,17 @@ exports.create = async (borrowData) => {
 };
 
 exports.getById = async (id) => {
-    const result = await modelBorrowTracking.findOne({ _id: id }).populate("userId employeeId");
+    const result = await modelBorrowTracking.findOne({ _id: id }).populate("userId employeeId borrowDetails.bookId");
     return result;
 };
 
 exports.getAllByUserId = async (userId) => {
-    const result = await modelBorrowTracking.find({ userId }).populate("employeeId");
+    const result = await modelBorrowTracking.find({ userId }).populate("employeeId borrowDetails.bookId");
     return result;
 };
 
 exports.getAll = async () => {
-    const result = await modelBorrowTracking.find().populate("userId employeeId");
+    const result = await modelBorrowTracking.find().populate("userId employeeId borrowDetails.bookId");
     return result;
 };
 

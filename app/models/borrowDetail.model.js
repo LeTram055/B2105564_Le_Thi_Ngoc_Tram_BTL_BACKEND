@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const BorrowDetailsSchema = new mongoose.Schema({
-    borrowId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "BorrowTracking",
-        required: [true, "Mượn sách id không được để trống"],
-    },
+    
     bookId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Book",
