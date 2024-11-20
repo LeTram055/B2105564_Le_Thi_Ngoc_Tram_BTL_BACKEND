@@ -24,7 +24,7 @@ exports.getAll = async (req, res, next) => {
     const { userId } = req.params
     try {
         if (!(mongoose.Types.ObjectId.isValid(userId))) {
-            throw new ApiError(400, "User id is not valid");
+            throw new ApiError(400, "Mã người dùng không hợp lệ");
         }
         let carts = await serviceCart.getAll(userId)
         
@@ -36,7 +36,7 @@ exports.getAll = async (req, res, next) => {
         carts = carts.filter(cart => cart !== null)
 
         res.status(200).json({
-            message: "Get all cart successfully",
+            message: "Lấy giỏ hàng thành công",
             data: carts,
         });
     } catch (err) {
@@ -48,21 +48,21 @@ exports.getById = async (req, res, next) => {
     const { id } = req.params
     try {
         if (!(util.isObjectId(id))) {
-            throw new ApiError(400, "Cart id is not valid");
+            throw new ApiError(400, "Mã giỏ hàng không hợp lệ");
         }
         const cart = await serviceCart.getById({
             cartId: id
         })
         if (!cart)
-            throw new ApiError(400, "Cart not exist");
+            throw new ApiError(400, "Giỏ hàng không tồn tại");
         const result = await this.extractCart(cart)
         if (result)
             res.status(200).json({
-                message: "Get cart successfully",
+                message: "Lấy giỏ hàng thành công",
                 data: result,
             });
         else {
-            throw new ApiError(400, "Cart not exist");
+            throw new ApiError(400, "Giỏ hàng không tồn tại");
         }
     } catch (err) {
         next(err);
@@ -73,7 +73,7 @@ exports.add = async (req, res, next) => {
     const { userId, bookId } = req.params
     
     if (!(mongoose.Types.ObjectId.isValid(userId) && mongoose.Types.ObjectId.isValid(bookId))) {
-        throw new ApiError(400, "User id or Book id is not valid");
+        throw new ApiError(400, "Mã người dùng hoặc mã sách không hợp lệ");
     }
 
 
@@ -81,7 +81,7 @@ exports.add = async (req, res, next) => {
     const book = await serviceBook.getById(bookId)
     if (!book) {
         
-        throw new ApiError(400, "Book not exist");
+        throw new ApiError(400, "Sách không tồn tại");
     }
 
     // get cart, if cart not exist => create cart with quantiy = 0
