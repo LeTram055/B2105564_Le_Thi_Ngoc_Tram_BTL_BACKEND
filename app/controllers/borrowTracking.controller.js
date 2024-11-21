@@ -118,7 +118,7 @@ exports.update = async (req, res, next) => {
         // Tạo đối tượng data để chứa thông tin cần cập nhật
         const data = { status, employeeId };
         const borrowTracking = await serviceBorrowTracking.getById(id);
-        
+        const borrowDetails = borrowTracking.borrowDetails;
         if (!borrowTracking) throw new ApiError(404, "Theo dõi mượn không tồn tại");
         // Xử lý cập nhật các ngày dựa vào trạng thái
         if (status === "Đã mượn") {
